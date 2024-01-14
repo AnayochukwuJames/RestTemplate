@@ -12,4 +12,6 @@ private String iso2;
 private String iso3;
 private String Country;
 private List<City> cities;
+private List<StateCapitalPair> states;
+
 }

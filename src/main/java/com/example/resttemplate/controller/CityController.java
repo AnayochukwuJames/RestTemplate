@@ -1,13 +1,16 @@
 package com.example.resttemplate.controller;
 
+import com.example.resttemplate.model.City;
 import com.example.resttemplate.model.Countries;
 import com.example.resttemplate.model.DataResponse;
+import com.example.resttemplate.model.StateCapitalPair;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,16 +33,43 @@ public class CityController {
                 .collect(Collectors.toList()).get(0);
         return countries;
     }
-//    @GetMapping("city")
-//    public List<Countries> getCity() {
-//        System.out.println("I am here");
-//        return countries.stream().filter(e -> getCountry().equals("Nigeria")).collect(Collectors.toList());
-//    }
-//    private String getCountry() {
-//        return "Nigeria";
-//    }
-//    public List<Countries> getCity(){
-//        System.out.println("I am here");
-//        return countries.stream().filter(e-> getCountry().equals("Nigeria")).collect(Collectors.toList());
-//    }
+
+    @GetMapping("cities/nigeria")
+    public List<City> getCitiesInNigeria() {
+        List<Countries> countries = getCountryDetails();
+        return countries.stream()
+                .filter(country -> "Nigeria".equalsIgnoreCase(country.getCountry()))
+                .findFirst()
+                .map(Countries::getCities)
+                .orElse(Collections.emptyList());
+    }
+    @GetMapping("state/nigeria")
+    public List<StateCapitalPair> getStatesAndCapitalsInNigeria() {
+        List<Countries> countries = getCountryDetails();
+
+        countries.forEach(country -> {
+            System.out.println("Country: " + country.getCountry());
+            System.out.println("States: " + country.getStates());
+        });
+
+        return countries.stream()
+                .filter(country -> "Nigeria".equalsIgnoreCase(country.getCountry()))
+                .findFirst()
+                .map(Countries::getStates)
+                .orElse(Collections.emptyList());
+    }
+    @GetMapping("cities/lagos")
+    public List<City> getCitiesInLagos() {
+        List<Countries> countries = getCountryDetails();
+        return countries.stream()
+                .filter(country -> "Nigeria".equalsIgnoreCase(country.getCountry()))
+                .findFirst()
+                .map(Countries::getCities)
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(city -> "Lagos".equalsIgnoreCase(city.getCity()))
+                .collect(Collectors.toList());
+    }
+
+
 }
