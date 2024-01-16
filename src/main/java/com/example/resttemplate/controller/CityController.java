@@ -70,6 +70,18 @@ public class CityController {
                 .filter(city -> "Lagos".equalsIgnoreCase(city.getCity()))
                 .collect(Collectors.toList());
     }
+    @GetMapping("cities/enugu")
+    public List<City> getCitiesInEnugu() {
+        List<Countries> countries = getCountryDetails();
+        return countries.stream()
+                .filter(country -> "Nigeria".equalsIgnoreCase(country.getCountry()))
+                .findFirst()
+                .map(Countries::getCities)
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(city -> "Enugu".equalsIgnoreCase(city.getCity()))
+                .collect(Collectors.toList());
+    }
 
 
 }
