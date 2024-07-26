@@ -2,86 +2,45 @@ package com.example.resttemplate.controller;
 
 import com.example.resttemplate.model.City;
 import com.example.resttemplate.model.Countries;
-import com.example.resttemplate.model.DataResponse;
 import com.example.resttemplate.model.StateCapitalPair;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import com.example.resttemplate.service.CityService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import lombok.*;
 
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
 public class CityController {
-    @GetMapping("cities")
-    public List<Countries> getCountryDetails (){
-        List<Countries> countries = new ArrayList<>();
 
-        String uri = "https://countriesnow.space/api/v0.1/countries";
-        RestTemplate template = new RestTemplate();
-        Object[] objects = new Object[]{template.getForObject(uri, Object.class)};
-        ObjectMapper objectMapper = new ObjectMapper();
-         countries = Arrays.stream(objects).map(o -> objectMapper.convertValue(o, DataResponse.class))
-                .map(DataResponse :: getData)
-                .collect(Collectors.toList()).get(0);
-        return countries;
+    private final CityService cityService;
+
+    @GetMapping("cities")
+    public List<Countries> getCountryDetails() {
+        return cityService.getCountryDetails();
     }
 
     @GetMapping("cities/nigeria")
     public List<City> getCitiesInNigeria() {
-        List<Countries> countries = getCountryDetails();
-        return countries.stream()
-                .filter(country -> "Nigeria".equalsIgnoreCase(country.getCountry()))
-                .findFirst()
-                .map(Countries::getCities)
-                .orElse(Collections.emptyList());
+        return cityService.getCitiesInNigeria();
     }
+
     @GetMapping("state/nigeria")
     public List<StateCapitalPair> getStatesAndCapitalsInNigeria() {
-        List<Countries> countries = getCountryDetails();
-
-        countries.forEach(country -> {
-            System.out.println("Country: " + country.getCountry());
-            System.out.println("States: " + country.getStates());
-        });
-
-        return countries.stream()
-                .filter(country -> "Nigeria".equalsIgnoreCase(country.getCountry()))
-                .findFirst()
-                .map(Countries::getStates)
-                .orElse(Collections.emptyList());
+        return cityService.getStatesAndCapitalsInNigeria();
     }
+
     @GetMapping("cities/lagos")
     public List<City> getCitiesInLagos() {
-        List<Countries> countries = getCountryDetails();
-        return countries.stream()
-                .filter(country -> "Nigeria".equalsIgnoreCase(country.getCountry()))
-                .findFirst()
-                .map(Countries::getCities)
-                .orElse(Collections.emptyList())
-                .stream()
-                .filter(city -> "Lagos".equalsIgnoreCase(city.getCity()))
-                .collect(Collectors.toList());
+        return cityService.getCitiesInLagos();
     }
+
     @GetMapping("cities/enugu")
     public List<City> getCitiesInEnugu() {
-        List<Countries> countries = getCountryDetails();
-        return countries.stream()
-                .filter(country -> "Nigeria".equalsIgnoreCase(country.getCountry()))
-                .findFirst()
-                .map(Countries::getCities)
-                .orElse(Collections.emptyList())
-                .stream()
-                .filter(city -> "Enugu".equalsIgnoreCase(city.getCity()))
-                .collect(Collectors.toList());
+        return cityService.getCitiesInEnugu();
     }
-
-
 }
